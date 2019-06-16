@@ -8,7 +8,10 @@ import (
 var user User
 
 func main() {
-	http.Handle("/api/todos", &APIHandler{new(TodoController)})
-	http.Handle("/", new(StaticFileHandler))
+	api := &APIHandler{new(TodoController)}
+	http.Handle("/api/", http.StripPrefix("/api/", api))
+	fs := http.FileServer(http.Dir("public/"))
+	http.Handle("/", fs)
+
 	log.Fatal(http.ListenAndServe("localhost:4440", nil))
 }
